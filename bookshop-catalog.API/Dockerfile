@@ -7,10 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["bookshop-catalog.API/bookshop-catalog.API.csproj", "bookshop-catalog/"]
-RUN dotnet restore "bookshop-catalog/bookshop-catalog.csproj"
+COPY ["bookshop-catalog.API/bookshop-catalog.API.csproj", "bookshop-catalog.API/"]
+RUN dotnet restore "bookshop-catalog.API/bookshop-catalog.API.csproj"
 COPY . .
-WORKDIR "/src/bookshop-catalog"
+WORKDIR "/src/bookshop-catalog.API"
 RUN dotnet build "bookshop-catalog.API.csproj" -c Release -o /app/build
 
 FROM build AS publish

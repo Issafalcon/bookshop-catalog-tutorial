@@ -1,0 +1,13 @@
+FROM mcr.microsoft.com/mssql/server:2019-latest
+
+USER root
+
+# Grant root group permissions to the non-root SQL server container so it has access to database files
+RUN chgrp -R 0 /var/opt/mssql && \
+    chmod -R g=u /var/opt/mssql
+
+RUN mkdir /var/opt/sqlserver && \
+    chgrp -R 0 /var/opt/sqlserver && \
+    chmod -R g=u /var/opt/sqlserver
+
+USER mssql

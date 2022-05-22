@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+  book-catalog-db:
+    container_name: book-catalog-db
+    build:
+      context: .
+      dockerfile: bookshop-catalog.API/Dockerfile.bookdb
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - "book-catalog-mssqlsystem:/var/opt/mssql"
+      - "book-catalog-mssqluser:/var/opt/sqlserver"
+
+  api:
+    container_name: book-catalog-api
+    depends_on:
+      - book-catalog-db
+    build:
+      context: .
+      dockerfile: bookshop-catalog.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - SQL_PASSWORD=Pass@word
+    ports:
+      - "5200:80"
+
+volumes:
+  book-catalog-mssqlsystem:
+  book-catalog-mssqluser:

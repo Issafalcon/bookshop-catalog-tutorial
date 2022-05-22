@@ -14,9 +14,10 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SQL_PASSWORD": "Pass@word"
       },
-      "applicationUrl": "https://localhost:7295;http://localhost:5295",
+      "applicationUrl": "https://localhost:7295;http://localhost:5200",
       "dotnetRunMessages": true
     },
     "IIS Express": {
