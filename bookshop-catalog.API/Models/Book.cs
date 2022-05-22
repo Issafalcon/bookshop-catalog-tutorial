@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
@@ -33,6 +34,7 @@ namespace bookshop_catalog.Models
         public double Price { get; set; }
     }
 
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum Sortby
     {
         [EnumMember(Value = @"title")]

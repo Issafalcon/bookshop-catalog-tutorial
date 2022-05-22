@@ -25,6 +25,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - SQL_PASSWORD=Pass@word
+      - SQL_SERVER="book-catalog-db,1433"
     ports:
       - "5200:80"
 
