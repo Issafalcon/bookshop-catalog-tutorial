@@ -25,9 +25,20 @@ namespace bookshop_catalog.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public Task<CreateBookResponse> CreateBook([FromBody][BindRequired] Book body)
+        public async Task<ActionResult> CreateBookAsync([FromBody][Bind("Author,Price,Title")] Book body)
         {
-            throw new NotImplementedException();
+            var book = new Book
+            {
+                Author = body.Author,
+                Price = body.Price,
+                Title = body.Title
+            };
+
+            _bookContext.Books.Add(book);
+
+            await _bookContext.SaveChangesAsync();
+
+            return Created(nameof(GetBookById), new { id = book.ID });
         }
 
         /// <summary>Returns a list of books. Sorted by title by default.</summary>
@@ -67,31 +78,66 @@ namespace bookshop_catalog.Controllers
         /// <summary>Update an existing book</summary>
         /// <param name="body">A JSON object that represents a book.</param>
         /// <returns>Success</returns>
-        [HttpPut, Route("{id:int}")]
+        [HttpPut, Route("{id:long}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public Task UpdateBookById([FromBody][BindRequired] Book body, [BindRequired] long id, CancellationToken cancellationToken)
+        public async Task<ActionResult> UpdateBookById([FromBody] Book body, long id)
         {
-            throw new NotImplementedException();
+            var bookItem = await _bookContext.Books.SingleOrDefaultAsync(i => i.ID == id);
+
+            if (bookItem == null)
+            {
+                return NotFound(new { Message = $"Item with id {id} not found." });
+            }
+
+            _bookContext.Books.Update(body);
+            await _bookContext.SaveChangesAsync();
+
+            return Created(nameof(GetBookById), new { id = body.ID });
         }
 
         /// <summary>Gets a book by id</summary>
         /// <returns>Success</returns>
-        [HttpGet, Route("{id}")]
+        [HttpGet, Route("{id:long}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public Task<Book> GetBookById([BindRequired] long id, CancellationToken cancellationToken)
+        public async Task<ActionResult<Book>> GetBookById(long id)
         {
-            throw new NotImplementedException();
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
+            var item = await _bookContext.Books.SingleOrDefaultAsync(b => b.ID == id);
+
+            if (item != null)
+            {
+                return item;
+            }
+
+            return NotFound();
         }
 
         /// <summary>Deletes a book by id</summary>
         /// <returns>Success</returns>
         [HttpDelete, Route("{id}")]
-        public Task DeleteBookById([BindRequired] long id, CancellationToken cancellationToken)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> DeleteBookById([BindRequired] long id)
         {
-            throw new NotImplementedException();
+            var book = _bookContext.Books.SingleOrDefault(x => x.ID == id);
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            _bookContext.Books.Remove(book);
+
+            await _bookContext.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
